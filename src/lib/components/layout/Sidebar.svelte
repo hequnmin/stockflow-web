@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-  import { Activity } from '@lucide/svelte';
+	import { Activity, Monitor } from '@lucide/svelte';
+	import type { Component } from 'svelte';
 
-	const menuItems = [
-		{ label: 'Dashboard', href: '/dashboard/overview' }
+	const menuItems: { label: string; href: string; icon?: Component }[] = [
+		{ label: 'Dashboard', href: '/dashboard/overview', icon: Monitor }
 	];
 </script>
 
@@ -17,12 +18,15 @@
 		{#each menuItems as item}
 			<a
 				href={item.href}
-				class="block rounded-md px-3 py-2 text-sm font-medium transition-colors
+				class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors
 					{page.url.pathname === item.href
 						? 'bg-slate-800 text-white'
 						: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
 			>
-				{item.label}
+				{#if item.icon}
+					<item.icon class="size-4" />
+				{/if}
+				<span>{item.label}</span>
 			</a>
 		{/each}
 	</nav>
