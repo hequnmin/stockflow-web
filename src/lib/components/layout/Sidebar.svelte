@@ -3,7 +3,7 @@
   import { Activity } from '@lucide/svelte';
 
 	const menuItems = [
-		{ label: 'Dashboard', href: '/dashboard' }
+		{ label: 'Dashboard', href: '/dashboard/overview' }
 	];
 </script>
 
