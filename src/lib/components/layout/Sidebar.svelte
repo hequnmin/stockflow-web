@@ -4,11 +4,11 @@
 		Activity,
 		ChevronDown,
 		ChevronRight,
-    SquareKanban,
 		Group,
 		Monitor,
 		PanelLeftClose,
-		PanelLeftOpen
+		PanelLeftOpen,
+		SquareKanban
 	} from '@lucide/svelte';
 	import type { Component } from 'svelte';
 
@@ -38,8 +38,12 @@
 
 	const menuItems: MenuItem[] = [
 		{ label: 'Dashboard', href: '/dashboard/overview', icon: Monitor },
-		{ label: 'Projects', href: '/projects/overview', icon: SquareKanban,
+		{
+			label: 'Projects',
+			href: '/projects/overview',
+			icon: SquareKanban,
 			children: [
+				{ label: 'Overview', href: '/projects/overview' },
 				{ label: 'Project Collection', href: '/projects/projectcollection', icon: Group }
 			]
 		}
@@ -68,23 +72,58 @@
 
 	<nav class="flex-1 py-4 px-3 space-y-1">
 		{#each menuItems as item}
-			{#if collapsed || !item.children}
-				<a
-					href={item.href}
-					class="flex items-center rounded-md py-2 text-sm font-medium transition-colors
-						{collapsed ? 'justify-center px-2' : 'gap-2 px-3'}
-						{isActive(item.href)
-							? 'bg-slate-800 text-white'
-							: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
-				>
-					{#if item.icon}
-						<item.icon class="size-5 shrink-0" />
-					{/if}
-					{#if !collapsed}
-						<span class="whitespace-nowrap overflow-hidden">{item.label}</span>
-					{/if}
-				</a>
-			{:else}
+			{#if collapsed}
+				{#if item.children}
+					<div class="group relative">
+						<button
+							class="w-full flex items-center justify-center rounded-md py-2 text-sm font-medium transition-colors
+								{isActive(item.href)
+									? 'bg-slate-800 text-white'
+									: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
+							aria-label={item.label}
+						>
+							{#if item.icon}
+								<item.icon class="size-5 shrink-0" />
+							{/if}
+						</button>
+
+						<div
+							class="hidden group-hover:block absolute left-full top-0 min-w-[10rem] bg-slate-900 border border-slate-700 rounded-md shadow-lg py-2 z-50"
+						>
+							<div class="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+								{item.label}
+							</div>
+							{#each item.children as child}
+								<a
+									href={child.href}
+									class="flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors
+										{page.url.pathname === child.href
+											? 'bg-slate-800 text-white'
+											: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
+								>
+									{#if child.icon}
+										<child.icon class="size-4 shrink-0" />
+									{/if}
+									<span class="whitespace-nowrap">{child.label}</span>
+								</a>
+							{/each}
+						</div>
+					</div>
+				{:else}
+					<a
+						href={item.href}
+						class="flex items-center justify-center rounded-md py-2 text-sm font-medium transition-colors
+							{isActive(item.href)
+								? 'bg-slate-800 text-white'
+								: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
+						aria-label={item.label}
+					>
+						{#if item.icon}
+							<item.icon class="size-5 shrink-0" />
+						{/if}
+					</a>
+				{/if}
+			{:else if item.children}
 				<div class="space-y-1">
 					<button
 						onclick={() => toggleSubmenu(item.label)}
@@ -123,6 +162,20 @@
 						</div>
 					{/if}
 				</div>
+			{:else}
+				<a
+					href={item.href}
+					class="flex items-center rounded-md py-2 text-sm font-medium transition-colors
+						gap-2 px-3
+						{isActive(item.href)
+							? 'bg-slate-800 text-white'
+							: 'text-slate-300 hover:bg-slate-800 hover:text-white'}"
+				>
+					{#if item.icon}
+						<item.icon class="size-5 shrink-0" />
+					{/if}
+					<span class="whitespace-nowrap overflow-hidden">{item.label}</span>
+				</a>
 			{/if}
 		{/each}
 	</nav>
